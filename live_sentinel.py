@@ -38,7 +38,7 @@ def run_live_monitor(interface="vcan0"):
             # Thresholding Logic (1000us as per Demo Safety Directive)
             if trackers[can_id].update_count < 10:
                 status = "\033[93mWARMUP\033[0m"   # Yellow
-            elif res_us < 1000:
+            elif res_us < 200:
                 status = "\033[92mPHYSICAL\033[0m" # Green
             else:
                 status = "\033[91mANOMALY\033[0m"  # Red
