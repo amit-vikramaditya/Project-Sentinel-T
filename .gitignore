@@ -5,5 +5,3 @@ __pycache__/
 *.csv
 .DS_Store
 *.png
-*.pptx
-*.docx
