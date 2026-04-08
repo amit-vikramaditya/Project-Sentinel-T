@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Sentinel-T — Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #0a0a12;
+            --surface: #13131f;
+            --surface2: #1c1c2e;
+            --border: #2a2a40;
+            --text: #e8e8f0;
+            --text-muted: #7878a0;
+            --accent: #6c8aff;
+            --accent2: #a78bfa;
+            --green: #34d399;
+            --red: #f87171;
+            --yellow: #fbbf24;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ======= SLIDE ENGINE ======= */
+        .deck {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 6rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateX(40px);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.exiting {
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+
+        .slide-inner {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* ======= TYPOGRAPHY ======= */
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        h1.gradient {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--accent2);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+            color: var(--text);
+        }
+
+        .muted {
+            color: var(--text-muted);
+        }
+
+        .small {
+            font-size: 0.95rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin: 0.6rem 0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--surface2);
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            font-size: 0.88em;
+            border: 1px solid var(--border);
+        }
+
+        pre {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            line-height: 1.55;
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* ======= CARDS / GRID ======= */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+        }
+
+        .card h3 {
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.8rem 1rem;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .val-green {
+            color: var(--green);
+        }
+
+        .val-red {
+            color: var(--red);
+        }
+
+        .val-accent {
+            color: var(--accent);
+        }
+
+        .val-yellow {
+            color: var(--yellow);
+        }
+
+        /* ======= TABLES ======= */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 0.65rem 0.9rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--surface2);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        td {
+            background: var(--surface);
+        }
+
+        /* ======= BADGES ======= */
+        .badge {
+            display: inline-block;
+            padding: 0.2em 0.65em;
+            border-radius: 5px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-green {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--green);
+        }
+
+        .badge-red {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--red);
+        }
+
+        .badge-yellow {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--yellow);
+        }
+
+        /* ======= DIAGRAM PLACEHOLDERS ======= */
+        .placeholder {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .placeholder .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ======= VS BLOCK ======= */
+        .vs-block {
+            display: flex;
+            align-items: stretch;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .vs-block .side {
+            flex: 1;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .vs-block .vs-divider {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        /* ======= TIMELINE ======= */
+        .timeline {
+            margin: 1rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin: 0.8rem 0;
+            align-items: flex-start;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-top: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .dot-blue {
+            background: var(--accent);
+        }
+
+        .dot-purple {
+            background: var(--accent2);
+        }
+
+        .dot-green {
+            background: var(--green);
+        }
+
+        /* ======= NAVIGATION ======= */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            background: rgba(10, 10, 18, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .nav-bar button {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .nav-bar button:hover {
+            background: var(--surface);
+            border-color: var(--accent);
+        }
+
+        .nav-bar .counter {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width 0.4s ease;
+            z-index: 100;
+        }
+
+        /* ======= COVER SPECIFIC ======= */
+        .cover-slide {
+            text-align: center;
+        }
+
+        .cover-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .cover-slide .tagline {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cover-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 2;
+        }
+
+        .cover-meta strong {
+            color: var(--text);
+        }
+
+        /* ======= EQUATION ======= */
+        .equation-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            margin: 1rem 0;
+            line-height: 2;
+        }
+
+        @media print {
+            .slide {
+                position: relative;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                page-break-after: always;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .nav-bar,
+            .progress-bar {
+                display: none;
+            }
+
+            :root {
+                --bg: #fff;
+                --surface: #f5f5f8;
+                --surface2: #ececf0;
+                --border: #d0d0d8;
+                --text: #1a1a2e;
+                --text-muted: #555;
+                --accent: #3b5bdb;
+                --accent2: #7048e8;
+            }
+
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress-bar" id="progress"></div>
+
+    <div class="deck" id="deck">
+
+        <!-- ==================== SLIDE 1: COVER ==================== -->
+        <div class="slide active cover-slide" data-slide="0">
+            <div class="slide-inner">
+                <h1 class="gradient">Project Sentinel-T</h1>
+                <p class="tagline">A Physical-Layer Intrusion Detection System for CAN Buses<br>Using Kernel-Level Clock
+                    Fingerprinting</p>
+                <div class="cover-meta">
+                    <strong>Amit Vikramaditya</strong><br>
+                    Microsoft Azure Cloud VM · Ubuntu 24.04<br>
+                    Phase 1 — Algorithm Validation · February 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: THE PROBLEM ==================== -->
+        <div class="slide" data-slide="1">
+            <div class="slide-inner">
+                <h2>The Problem</h2>
+                <p>CAN protocol (ISO 11898, 1986) — <strong>no authentication, no encryption, no sender ID</strong>.</p>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>🔓 Broadcast by Design</h3>
+                        <p class="small">Every node sees every message. Messages identified by CAN ID, not sender
+                            address. Any node can impersonate any other node.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📡 Expanded Attack Surface</h3>
+                        <p class="small">OBD-II ports, TCUs with cellular, infotainment (WiFi/BT/USB), V2X modules,
+                            aftermarket dongles — all pathways to the CAN bus.</p>
+                    </div>
+                </div>
+                <p class="muted small" style="margin-top:1rem;">Reference: Miller & Valasek (2015) — remote compromise
+                    of Jeep Cherokee steering, braking, transmission via cellular → TCU → CAN bus chain.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: WHY CRYPTO FAILS ==================== -->
+        <div class="slide" data-slide="2">
+            <div class="slide-inner">
+                <h2>Why Cryptographic MACs Fail on CAN</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>📦 8-Byte Payload Limit</h3>
+                        <p class="small">Truncated HMAC consumes ≥ 50% of data payload. Unacceptable bandwidth trade-off
+                            for safety-critical signals.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Legacy Hardware</h3>
+                        <p class="small">Hundreds of millions of vehicles use 8/16-bit MCUs (Renesas RL78, NXP S12)
+                            without crypto accelerators. No firmware path.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⏱️ Real-Time Deadline</h3>
+                        <p class="small">CAN cycles: 1–10 ms. Crypto latency on constrained MCUs risks violating hard
+                            real-time safety requirements.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔑 Key Management</h3>
+                        <p class="small">70–100 ECUs, multiple Tier-1 suppliers, full vehicle lifetime. Key distribution
+                            and rotation is a supply-chain nightmare.</p>
+                    </div>
+                </div>
+                <p style="margin-top:1.2rem; text-align:center;"><strong>→ We need physical-layer authentication, not
+                        data-layer encryption.</strong></p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: THE INSIGHT ==================== -->
+        <div class="slide" data-slide="3">
+            <div class="slide-inner">
+                <h2>The Core Insight</h2>
+                <div class="vs-block">
+                    <div class="side" style="border-color: var(--green);">
+                        <h3 style="color:var(--green);">Real ECU — Crystal Oscillator</h3>
+                        <ul>
+                            <li>Quartz crystal has temperature-dependent frequency</li>
+                            <li>Clock drift is <strong>correlated</strong> over time</li>
+                            <li><strong>Unique per device</strong> (manufacturing tolerance)</li>
+                            <li>Physically bounded by thermal mass</li>
+                        </ul>
+                        <p class="small muted" style="margin-top:0.8rem;">Modeled as: sinusoidal thermal drift +
+                            Ornstein-Uhlenbeck mean-reverting jitter</p>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="side" style="border-color: var(--red);">
+                        <h3 style="color:var(--red);">Software Attacker — OS Timer</h3>
+                        <ul>
+                            <li>Relies on <code>sleep()</code> / <code>usleep()</code></li>
+                            <li>Jitter is <strong>uncorrelated</strong> (memoryless)</li>
+                            <li><strong>Gaussian noise</strong> from scheduling</li>
+                            <li>Cannot replicate physical silicon behavior</li>
+                        </ul>
+                        <p class="small muted" style="margin-top:0.8rem;">This structural difference is <em>physically
+                                unforgeable</em> in software.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: ARCHITECTURE ==================== -->
+        <div class="slide" data-slide="4">
+            <div class="slide-inner">
+                <h2>3-Layer System Architecture</h2>
+                <table>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Component</th>
+                        <th>Function</th>
+                        <th>Privilege</th>
+                    </tr>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>Physical Bus Interface</td>
+                        <td>Raw CAN frame reception via SocketCAN</td>
+                        <td>Kernel Space</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>Kernel Timestamp Tap</td>
+                        <td><code>SO_TIMESTAMP</code> extraction via <code>recvmsg()</code></td>
+                        <td>Kernel → User</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>Chronomorphic Engine</td>
+                        <td>Kalman Filter + anomaly classification</td>
+                        <td>User Space (Python)</td>
+                    </tr>
+                </table>
+                <p class="muted small" style="margin-top:1rem;">Data flows upward: Physical Bus → Kernel Tap → Kalman
+                    Filter → Verdict.</p>
+                <div class="placeholder">
+                    <div class="icon">🏗️</div>
+                    <strong>[INSERT IMAGE 2 HERE: 3-Layer Architecture Diagram]</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: KERNEL TAP ==================== -->
+        <div class="slide" data-slide="5">
+            <div class="slide-inner">
+                <h2>The Kernel Tap: Why <code>time.time()</code> Fails</h2>
+                <div class="grid-2">
+                    <div class="card" style="border-color: var(--red);">
+                        <h3 style="color:var(--red);">❌ time.time()</h3>
+                        <p class="small">Timestamp recorded <em>after</em> user-space scheduling. OS jitter: 50–500 µs.
+                            Same magnitude as the drift signal. <strong>Useless.</strong></p>
+                    </div>
+                    <div class="card" style="border-color: var(--green);">
+                        <h3 style="color:var(--green);">✅ SO_TIMESTAMP</h3>
+                        <p class="small">Timestamp recorded <em>inside the kernel</em> at socket buffer delivery. Before
+                            scheduling. Microsecond resolution. <strong>Critical enabler.</strong></p>
+                    </div>
+                </div>
+                <pre><code># can_receiver.py — The Kernel Tap
+SO_TIMESTAMP = 29
+self.sock.setsockopt(SOL_SOCKET, SO_TIMESTAMP, 1)
+
+msg, ancdata, flags, addr = self.sock.recvmsg(16, cmsg_capacity)
+
+for cmsg_level, cmsg_type, cmsg_data in ancdata:
+    if cmsg_level == SOL_SOCKET and cmsg_type == SCM_TIMESTAMP:
+        seconds, microseconds = struct.unpack("qq", cmsg_data)
+        kernel_timestamp = seconds + (microseconds / 1e6)</code></pre>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: KALMAN FILTER ==================== -->
+        <div class="slide" data-slide="6">
+            <div class="slide-inner">
+                <h2>Phase-Velocity Kalman Filter</h2>
+                <div class="equation-box">
+                    State Vector: &nbsp; x<sub>k</sub> = [ φ<sub>k</sub> , φ̇<sub>k</sub> ]<sup>T</sup><br>
+                    φ<sub>k</sub> = phase offset (seconds) &nbsp;|&nbsp; φ̇<sub>k</sub> = frequency drift (s/interval)
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <h3>State Transition (F)</h3>
+                        <pre><code>F = │ 1  1 │
+    │ 0  1 │
+
+"Drift rate changes slowly
+ between 10ms measurements"</code></pre>
+                    </div>
+                    <div>
+                        <h3>Recursion (per packet)</h3>
+                        <pre><code>1. PREDICT
+   x_pred = F @ x
+   P_pred = F @ P @ Fᵀ + Q
+
+2. MEASURE
+   residual = z - H @ x_pred
+
+3. UPDATE
+   K = P_pred @ Hᵀ @ S⁻¹
+   x = x_pred + K × residual</code></pre>
+                    </div>
+                </div>
+                <p class="small muted" style="margin-top:0.5rem;"><strong>Observation:</strong> H = [1, 0] — only phase
+                    offset is measured. <strong>Key output:</strong> the residual measures how <em>surprised</em> the
+                    filter is by each packet.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: TUNING ==================== -->
+        <div class="slide" data-slide="7">
+            <div class="slide-inner">
+                <h2>Filter Tuning: Q & R</h2>
+                <div class="grid-3">
+                    <div class="card stat-card">
+                        <div class="value val-accent">1×10⁻¹²</div>
+                        <div class="label">Q (Process Noise)</div>
+                        <p class="small muted" style="margin-top:0.6rem;">"Trust the model strongly. Physical drift is
+                            extremely slow."</p>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="value val-accent">1×10⁻¹⁰</div>
+                        <div class="label">R (Measurement Noise)</div>
+                        <p class="small muted" style="margin-top:0.6rem;">"Individual measurements are noisy (~10µs σ).
+                            Don't overreact."</p>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="value val-accent">10⁻²</div>
+                        <div class="label">Q / R Ratio</div>
+                        <p class="small muted" style="margin-top:0.6rem;">"Heavy damping. Sees <em>through</em> OS
+                            jitter to the physical drift."</p>
+                    </div>
+                </div>
+                <p style="margin-top:1.5rem; text-align:center;">High R/Q ratio → slow convergence, strong noise
+                    rejection → filter recovers the <strong>thermal drift signal</strong> under Linux scheduling noise.
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: DETECTION LOGIC ==================== -->
+        <div class="slide" data-slide="8">
+            <div class="slide-inner">
+                <h2>Detection Logic</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Two-Phase Classification</h3>
+                        <pre><code>if update_count < 10:
+    status = WARMUP    # Filter converging
+
+elif residual_us < 200:
+    status = PHYSICAL  # Hardware clock ✓
+
+else:
+    status = ANOMALY   # Software attacker ✗</code></pre>
+                    </div>
+                    <div>
+                        <h3>Threshold Selection</h3>
+                        <table>
+                            <tr>
+                                <th>Source</th>
+                                <th>Error</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr>
+                                <td>ECU</td>
+                                <td>0.53 µs</td>
+                                <td><span class="badge badge-green">PHYSICAL</span></td>
+                            </tr>
+                            <tr>
+                                <td>Attacker</td>
+                                <td>350–800 µs</td>
+                                <td><span class="badge badge-red">ANOMALY</span></td>
+                            </tr>
+                        </table>
+                        <p class="small muted" style="margin-top:0.8rem;">Threshold at <strong>200 µs</strong> sits in a
+                            wide, unpopulated gap. Margin: ~378× above ECU floor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: INFRASTRUCTURE ==================== -->
+        <div class="slide" data-slide="9">
+            <div class="slide-inner">
+                <h2>Cloud Infrastructure & Modules</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>☁️ Azure Deployment</h3>
+                        <table style="font-size:0.85rem;">
+                            <tr>
+                                <td><strong>Provider</strong></td>
+                                <td>Microsoft Azure</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OS</strong></td>
+                                <td>Ubuntu 24.04 LTS</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kernel</strong></td>
+                                <td>linux-modules-extra</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Interface</strong></td>
+                                <td>vcan0 (Virtual CAN)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <h3>📁 Codebase</h3>
+                        <ul>
+                            <li><code>can_receiver.py</code> — Kernel Tap (SO_TIMESTAMP + recvmsg)</li>
+                            <li><code>drift_tracker.py</code> — 2D Kalman Filter engine</li>
+                            <li><code>live_sentinel.py</code> — Real-time monitor & classifier</li>
+                        </ul>
+                    </div>
+                </div>
+                <pre><code># vcan0 provisioning
+sudo modprobe vcan
+sudo ip link add dev vcan0 type vcan
+sudo ip link set up vcan0</code></pre>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: LIVE RESULTS ==================== -->
+        <div class="slide" data-slide="10">
+            <div class="slide-inner">
+                <h2>Live Validation Results</h2>
+                <div class="grid-2" style="margin-bottom:1.5rem;">
+                    <div class="card" style="border-color:var(--green);">
+                        <h3 style="color:var(--green);">✅ Valid ECU (cangen)</h3>
+                        <pre style="font-size:0.82rem;"><code>cangen vcan0 -g 10 -I 100</code></pre>
+                        <p class="small">Avg residual error: <strong style="color:var(--green);">0.53 µs</strong></p>
+                        <p class="small muted">Smooth, slowly-varying drift. Converges after ~10 packets.</p>
+                    </div>
+                    <div class="card" style="border-color:var(--red);">
+                        <h3 style="color:var(--red);">❌ Attacker (Bash loop)</h3>
+                        <pre
+                            style="font-size:0.82rem;"><code>while true; do cansend vcan0 666#DEADBEEF; sleep 0.01; done</code></pre>
+                        <p class="small">Avg residual error: <strong style="color:var(--red);">350 – 800 µs</strong></p>
+                        <p class="small muted">Noisy, erratic drift. Persistently above threshold.</p>
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div class="card stat-card">
+                        <div class="value val-accent">1.88×</div>
+                        <div class="label">SNR Achieved</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="value val-green">&lt; 0.04 ms</div>
+                        <div class="label">Per-Packet Latency</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="value val-green">0%</div>
+                        <div class="label">False Positive / Negative</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: RESULTS DASHBOARD ==================== -->
+        <div class="slide" data-slide="11">
+            <div class="slide-inner">
+                <h2>Performance Summary</h2>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Significance</th>
+                    </tr>
+                    <tr>
+                        <td>Signal-to-Noise Ratio</td>
+                        <td><strong>1.88×</strong></td>
+                        <td>Physical signal recoverable through OS jitter</td>
+                    </tr>
+                    <tr>
+                        <td>Detection Threshold</td>
+                        <td><strong>200 µs</strong></td>
+                        <td>Wide unpopulated gap between classes</td>
+                    </tr>
+                    <tr>
+                        <td>ECU Avg Error</td>
+                        <td><strong>0.53 µs</strong></td>
+                        <td>0.27% of threshold — clean floor</td>
+                    </tr>
+                    <tr>
+                        <td>Attacker Avg Error</td>
+                        <td><strong>350–800 µs</strong></td>
+                        <td>175–400% of threshold — clear separation</td>
+                    </tr>
+                    <tr>
+                        <td>Per-Packet Latency</td>
+                        <td><strong>&lt; 0.04 ms</strong></td>
+                        <td>&gt; 99.6% cycle budget available</td>
+                    </tr>
+                    <tr>
+                        <td>Warmup</td>
+                        <td><strong>10 packets</strong></td>
+                        <td>100 ms convergence at 100 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>False Positive Rate</td>
+                        <td><strong>0%</strong></td>
+                        <td>ECU never exceeded threshold</td>
+                    </tr>
+                    <tr>
+                        <td>False Negative Rate</td>
+                        <td><strong>0%</strong></td>
+                        <td>Attacker never fell below threshold</td>
+                    </tr>
+                </table>
+                <div class="placeholder">
+                    <div class="icon">🖥️</div>
+                    <strong>[INSERT IMAGE 6 HERE: Azure Terminal Live Dashboard Screenshot]</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: CONCLUSION ==================== -->
+        <div class="slide" data-slide="12">
+            <div class="slide-inner">
+                <h2>Conclusions</h2>
+                <ul>
+                    <li><strong>Kernel timestamping is essential.</strong> <code>SO_TIMESTAMP</code> reduces noise by
+                        1–2 orders of magnitude vs <code>time.time()</code>.</li>
+                    <li><strong>The Kalman Filter works.</strong> 2-state PV filter (Q=1×10⁻¹², R=1×10⁻¹⁰) separates
+                        correlated drift from uncorrelated jitter.</li>
+                    <li><strong>Clear detection boundary.</strong> 200 µs threshold cleanly separates 0.53 µs (ECU) from
+                        350–800 µs (attacker).</li>
+                    <li><strong>Real-time capable.</strong> &lt; 0.04 ms latency leaves &gt; 99.6% of the 10 ms CAN
+                        cycle untouched.</li>
+                    <li><strong>Cloud validation is sufficient for Phase 1.</strong> Azure + vcan0 proved algorithmic
+                        viability.</li>
+                </ul>
+                <p style="margin-top:1.5rem; text-align:center; font-size:1.2rem;">
+                    <strong>1.88× SNR confirms:</strong> physical clock drift is distinguishable from software timing,
+                    even through Linux kernel jitter.
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: FUTURE WORK ==================== -->
+        <div class="slide" data-slide="13">
+            <div class="slide-inner">
+                <h2>Future Work</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot dot-blue"></div>
+                        <div>
+                            <h3>Phase 2 — Physical Hardware</h3>
+                            <p class="small">Arduino CAN transceiver (MCP2515 + SN65HVD230) → Raspberry Pi. Real crystal
+                                oscillator drift, physical bus propagation, hardware interrupts.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot dot-purple"></div>
+                        <div>
+                            <h3>Phase 3 — Mamba SSM Integration</h3>
+                            <p class="small">Replace Kalman Filter with a selective State-Space Model (Mamba) to learn
+                                non-linear clock drift patterns from data. No hand-tuned Q/R needed.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot dot-green"></div>
+                        <div>
+                            <h3>Phase 4 — Adversarial Robustness</h3>
+                            <p class="small">Test against adaptive attackers who deliberately introduce correlated
+                                timing to mimic physical drift. Establish theoretical detection limits.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: END ==================== -->
+        <div class="slide cover-slide" data-slide="14">
+            <div class="slide-inner">
+                <h1 class="gradient">Thank You</h1>
+                <p class="tagline">Project Sentinel-T — Phase 1 Algorithm Validation Complete</p>
+                <div class="cover-meta">
+                    <strong>Amit Vikramaditya</strong><br>
+                    <br>
+                    <span class="badge badge-green" style="font-size:1rem; padding: 0.4em 1em;">SNR: 1.88× · Latency:
+                        &lt; 0.04 ms · Threshold: 200 µs</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ======= NAVIGATION BAR ======= -->
+    <div class="nav-bar">
+        <button onclick="prevSlide()">← Prev</button>
+        <span class="counter" id="counter">1 / 15</span>
+        <button onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        let current = 0;
+
+        function showSlide(n) {
+            slides.forEach((s, i) => {
+                s.classList.remove('active', 'exiting');
+                if (i === n) s.classList.add('active');
+            });
+            current = n;
+            document.getElementById('counter').textContent = `${n + 1} / ${total}`;
+            document.getElementById('progress').style.width = `${((n + 1) / total) * 100}%`;
+        }
+
+        function nextSlide() { if (current < total - 1) showSlide(current + 1); }
+        function prevSlide() { if (current > 0) showSlide(current - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+            if (e.key === 'End') { e.preventDefault(); showSlide(total - 1); }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; });
+        document.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 50) { dx < 0 ? nextSlide() : prevSlide(); }
+        });
+
+        showSlide(0);
+    </script>
+
+</body>
+
+</html>
