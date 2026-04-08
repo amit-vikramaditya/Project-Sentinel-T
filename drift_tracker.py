@@ -1,4 +1,9 @@
 import numpy as np
+from config import (
+    DEFAULT_BASE_INTERVAL,
+    KALMAN_Q_NOISE,
+    KALMAN_R_NOISE,
+)
 
 class DriftTracker:
     """
@@ -8,7 +13,7 @@ class DriftTracker:
     Tuning Rescue: R is increased to 1e-4 to allow the filter to ignore 
     high-frequency OS jitter and focus on the low-frequency physical drift.
     """
-    def __init__(self, base_interval=0.010, q_noise=1e-12, r_noise=1e-10):
+    def __init__(self, base_interval=DEFAULT_BASE_INTERVAL, q_noise=KALMAN_Q_NOISE, r_noise=KALMAN_R_NOISE):
         self.base_interval = base_interval
         self.update_count = 0
         

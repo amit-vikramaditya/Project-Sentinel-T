@@ -14,23 +14,17 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import random
+from config import DEFAULT_DURATION_S, AUTOMOTIVE_ECUS, ECU_OU_THETA, ECU_OU_SIGMA, ECU_THERMAL_AMPLITUDE, SMART_ATTACKER_NOISE_STD, REPLAY_JITTER_STD
 
 class AutomotiveCANGenerator:
     """Generates realistic multi-ECU CAN traffic with attacks."""
     
-    def __init__(self, duration_seconds=300):
+    def __init__(self, duration_seconds=DEFAULT_DURATION_S):
         self.duration = duration_seconds
         self.start_time = 0.0
         
-        # Realistic ECU configurations (ID, Interval, Name, Criticality)
-        self.ecus = [
-            {"id": 0x100, "interval": 0.010, "name": "Steering_Angle", "critical": True},
-            {"id": 0x101, "interval": 0.020, "name": "ABS_Brake", "critical": True},
-            {"id": 0x200, "interval": 0.100, "name": "Engine_RPM", "critical": False},
-            {"id": 0x201, "interval": 0.100, "name": "Vehicle_Speed", "critical": False},
-            {"id": 0x300, "interval": 0.500, "name": "Fuel_Level", "critical": False},
-            {"id": 0x400, "interval": 1.000, "name": "Dashboard_Lights", "critical": False},
-        ]
+        # Realistic ECU configurations (from config.py)
+        self.ecus = AUTOMOTIVE_ECUS
     
     def _generate_ecu_traffic(self, ecu_config, attack_window=None):
         """Generate traffic for a single ECU with realistic clock drift."""
@@ -145,6 +139,27 @@ class AutomotiveCANGenerator:
                 })
                 current_time += base_interval + noise  # Gaussian jitter only
         
+        elif attack_type == "replay":
+            # Replay attack: simulates an attacker that re-transmits messages
+            # at the victim ECU's nominal rate but with a fixed propagation
+            # delay (capture-to-replay latency) and a small amount of jitter
+            # from the replayer's own software clock.
+            current_time = start_time
+            base_interval = 0.010
+            replay_offset = 0.0015  # 1.5 ms constant capture-to-replay delay
+
+            while current_time < end_time:
+                jitter = np.random.normal(0, REPLAY_JITTER_STD)
+                messages.append({
+                    "timestamp": current_time + replay_offset,
+                    "can_id": can_id,
+                    "dlc": 8,
+                    "data": "CAFEBABE",   # replayed payload marker
+                    "ecu_name": "REPLAYER",
+                    "label": "ATTACK"
+                })
+                current_time += base_interval + jitter
+
         elif attack_type == "fuzzing":
             # High-rate random data flood
             current_time = start_time
@@ -259,6 +274,17 @@ def create_benchmark_datasets():
         "end_time": 70  # Short burst
     }
     datasets["fuzzing_attack"] = gen.generate_dataset(attack)
+
+    # Dataset 5: Replay Attack
+    print("\n📊 Dataset 5: Replay Attack")
+    gen = AutomotiveCANGenerator(duration_seconds=120)
+    attack = {
+        "type": "replay",
+        "target_id": 0x100,   # Replaying steering messages
+        "start_time": 60,
+        "end_time": 90
+    }
+    datasets["replay_attack"] = gen.generate_dataset(attack)
     
     return datasets
 
