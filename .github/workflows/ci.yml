@@ -43,6 +43,11 @@ jobs:
       contents: read
       actions: write
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -59,6 +64,9 @@ jobs:
       - name: Generate presentation
         run: python generate_presentation.py
 
+      - name: Generate Word report
+        run: python generate_report.py
+
       - name: Upload demo plot
         uses: actions/upload-artifact@v4
         with:
@@ -70,3 +78,9 @@ jobs:
         with:
           name: presentation
           path: Sentinel_T_Presentation.pptx
+
+      - name: Upload Word report
+        uses: actions/upload-artifact@v4
+        with:
+          name: word-report
+          path: PROJECT_SENTINEL_T_Report.docx
